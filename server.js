@@ -16,7 +16,7 @@ mongoose.Promise = Promise
 const animalSchema = new mongoose.Schema ({
   lost: Boolean,
   found: Boolean,
-  photo: Image,
+  photo: String, //change?
   name: String,
   species: String,
   sex: String,
@@ -94,16 +94,19 @@ app.get('/home', (req, res) => {
   res.send('This is the home page')
 })
 
-app.get('/animalposts', (req, res) => {
+app.get('/animalposts', async (req, res) => {
   const { lost } = req.query; 
 
   if (lost) {
-      const lostAnimals= await Animal.find({
-        name: {
+      const lostAnimals = await Animal.find({
+        lost: {
           $regex: new RegExp(lost, "i") //this operator tells mongo to not care about case sensitivity when searching
         }
       }).populate('lost')
       res.json(lostAnimals)
+    } else {
+      const animals = await Animal.find()
+      res.json(animals)
     }
 })
 

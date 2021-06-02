@@ -1,0 +1,38 @@
+[
+  {
+  "lost": false,
+  "found": true,
+  "photo": "",
+  "name": "Frasse",
+  "species": "cat",
+  "sex": "male",
+  "breed": "ragdoll",
+  "location": "Malin's heart",
+  "description": "sky blue eyes, white fur, very fluffy",
+  "contact": "KingFrasse1@malinsheart.com"
+  },
+{
+  "lost": true,
+  "found": false,
+  "photo": "",
+  "name": "Socks",
+  "species": "cat",
+  "sex": "male",
+  "breed": "scottish fold" ,
+  "location": "uppsala, sweden",
+  "description": "Grey fur, yellow eyes, tiny ears, a bit fat, meows ALOT",
+  "contact": "socksOwner@findmycat.com"
+  },
+{
+  "lost": false,
+  "found": true,
+  "photo": "",
+  "name": "Alfie",
+  "species": "dog",
+  "sex": "male",
+  "breed": "welsh cardigan corgi",
+  "location": "elaine's heart" ,
+  "description": "bussig, black fur, white fur on tail tip, paws, and belly, brown patches on face that look like eyebrows",
+  "contact": "kingAlfie23@gmail.com" 
+  }
+]
