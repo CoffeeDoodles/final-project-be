@@ -67,28 +67,23 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/posters', async (req, res) => {
-  const { lost, found, species } = req.query; 
-  const lostPets = await Animal.find()
+  const { lost, species } = req.query;   
 
   console.log(req.query)
-  if (lost === true) {
-      res.json(lostPets)
-    } else if (found){
-      const foundPets = await Animal.find({
-        lost: false,
-        found: true
+
+  if (lost) {
+      const lostPets = await Animal.find({
+        lost: true
       })
-      res.json(foundPets)
-    }
-    // } else if (species) {
-    //   const species = await Animal.find()
-    //     species: {
-    //             $regex: new RegExp(species, "i") //this operator tells mongo to not care about case sensitivity when searching
-    //           }
-    //   })
-    //   res.json(species)
-    
-    else {
+      res.json(lostPets)
+    } else if (species) {
+      const speciesType = await Animal.find({
+        species: {
+                $regex: new RegExp(species, "i") 
+              }
+      })
+      res.json(speciesType)    
+    } else {
       res.json(animalData)
     }
 })
