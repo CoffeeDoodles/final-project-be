@@ -67,25 +67,28 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/posters', async (req, res) => {
-  const { lost, species } = req.query;   
+  const { lost, species } = req.query; 
+  console.log(req.query)  
 
-  console.log(req.query)
+  if (lost == 'true') {
+    const lostPets = await Animal.find({ lost: true }) 
+    res.json(lostPets)
+  } else if (lost == 'false') {
+    const foundPets = await Animal.find({ lost: false }) 
+    res.json(foundPets)
+  } else {
+    res.sendStatus(400);
+  }
 
-  if (lost) {
-      const lostPets = await Animal.find({
-        lost: true
-      })
-      res.json(lostPets)
-    } else if (species) {
-      const speciesType = await Animal.find({
-        species: {
-                $regex: new RegExp(species, "i") 
-              }
-      })
-      res.json(speciesType)    
-    } else {
-      res.json(animalData)
-    }
+  // if (species) {
+  //   const speciesType = await Animal.find({
+  //     species: {
+  //             $regex: new RegExp(species, "i") 
+  //           }
+  //   })
+  //   res.json(speciesType)   
+  // } 
+    console.log(lost)
 })
 
 //Post Requests Here
