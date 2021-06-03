@@ -1,6 +1,6 @@
 [
   {
-  "lost": false,
+  "status": "found",
   "photo": "",
   "name": "Frasse",
   "species": "cat",
@@ -11,7 +11,7 @@
   "contact": "KingFrasse1@malinsheart.com"
   },
 {
-  "lost": true,
+  "status": "lost",
   "photo": "",
   "name": "Socks",
   "species": "cat",
@@ -22,7 +22,7 @@
   "contact": "socksOwner@findmycat.com"
   },
 {
-  "lost": true,
+  "status": "found",
   "photo": "",
   "name": "Alfie",
   "species": "dog",

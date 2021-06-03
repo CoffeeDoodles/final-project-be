@@ -3,7 +3,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 // import crypto from 'crypto'
 // import bcrypt from 'bcrypt'
-import dotenv from 'dotenv'
+// import dotenv from 'dotenv'
 import listEndpoints from 'express-list-endpoints'
 
 import animalData from './data/animal-card-data.json';
@@ -14,8 +14,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = Promise
 
 const animalSchema = new mongoose.Schema ({
-  lost: Boolean,
-  found: Boolean,
+  status: String,
   photo: String,
   name: String,
   species: String,
@@ -67,28 +66,24 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/posters', async (req, res) => {
-  const { lost, species } = req.query; 
-  console.log(req.query)  
+  const { status, species } = req.query; 
+  console.log(req.query)
 
-  if (lost == 'true') {
-    const lostPets = await Animal.find({ lost: true }) 
+  if (status == 'lost') {
+    const lostPets = await Animal.find({ status: 'lost' }) 
     res.json(lostPets)
-  } else if (lost == 'false') {
-    const foundPets = await Animal.find({ lost: false }) 
+  } else if (status == 'found') {
+    const foundPets = await Animal.find({ status: 'found' }) 
     res.json(foundPets)
   } else {
     res.sendStatus(400);
   }
 
-  // if (species) {
-  //   const speciesType = await Animal.find({
-  //     species: {
-  //             $regex: new RegExp(species, "i") 
-  //           }
-  //   })
-  //   res.json(speciesType)   
-  // } 
-    console.log(lost)
+  if (species == 'dog') {
+    const speciesType = await Animal.find({ species: 'dog' })
+    res.json(speciesType)   
+  } 
+  console.log(species)
 })
 
 //Post Requests Here
