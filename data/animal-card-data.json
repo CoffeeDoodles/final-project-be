@@ -1,7 +1,6 @@
 [
   {
   "lost": false,
-  "found": true,
   "photo": "",
   "name": "Frasse",
   "species": "cat",
@@ -13,7 +12,6 @@
   },
 {
   "lost": true,
-  "found": false,
   "photo": "",
   "name": "Socks",
   "species": "cat",
@@ -24,8 +22,7 @@
   "contact": "socksOwner@findmycat.com"
   },
 {
-  "lost": false,
-  "found": true,
+  "lost": true,
   "photo": "",
   "name": "Alfie",
   "species": "dog",
