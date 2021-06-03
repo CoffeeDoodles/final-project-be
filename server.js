@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 // import dotenv from 'dotenv'
 import listEndpoints from 'express-list-endpoints'
 
-import petData from './data/animal-card-data.json';
+import petData from './data/animal-card-data.json'
 
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter"
@@ -66,7 +66,7 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/petposts', async (req, res) => {
-  const { status, species} = req.query; 
+  const { status, species} = req.query
   //add newest & oldest queries when frontend started
   if (status) {
     if (status == 'lost') {
@@ -76,7 +76,7 @@ app.get('/petposts', async (req, res) => {
       const foundPets = await Pet.find({ status: 'found' }) 
       res.json(foundPets)
     } else {
-      res.sendStatus(400);
+      res.sendStatus(400)
     }
   } else if (species) {
     if (species === 'cat') {
@@ -86,7 +86,7 @@ app.get('/petposts', async (req, res) => {
         const speciesDog = await Pet.find({ species: 'dog' }) 
         res.json(speciesDog)
     } else {
-        res.sendStatus(400);
+        res.sendStatus(400)
     }
   } else {
     const allPetPosts = await Pet.find()
@@ -94,7 +94,20 @@ app.get('/petposts', async (req, res) => {
   }
 })
 
-app.get('/p')
+app.get('/petposts/:postId', async (req, res) => {
+    const { postId } = req.params
+  
+    try {
+      const singlePost = await Pet.findById(postId);
+      if (singlePost) {
+        res.json(singlePost)
+      } else {
+        res.status(404).json({ error: 'Post not found' })
+      }
+    } catch {
+      response.status(400).json({ error: 'Invalid request' })
+    }
+  })
 
 //Post Requests Here
 
