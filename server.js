@@ -66,24 +66,32 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/posters', async (req, res) => {
-  const { status, species } = req.query; 
-  console.log(req.query)
-
-  if (status == 'lost') {
-    const lostPets = await Animal.find({ status: 'lost' }) 
-    res.json(lostPets)
-  } else if (status == 'found') {
-    const foundPets = await Animal.find({ status: 'found' }) 
-    res.json(foundPets)
+  const { status, species} = req.query; 
+  
+  if (status) {
+    if (status == 'lost') {
+      const lostPets = await Animal.find({ status: 'lost' }) 
+      res.json(lostPets)
+    } else if (status == 'found') {
+      const foundPets = await Animal.find({ status: 'found' }) 
+      res.json(foundPets)
+    } else {
+      res.sendStatus(400);
+    }
+  } else if (species) {
+    if (species === 'cat') {
+      const speciesCat = await Animal.find({ species: 'cat' }) 
+      res.json(speciesCat)
+    } else if (species === 'dog') {
+        const speciesDog = await Animal.find({ species: 'dog' }) 
+        res.json(speciesDog)
+    } else {
+        res.sendStatus(400);
+    }
   } else {
-    res.sendStatus(400);
+    const allPetPosts = await Animal.find()
+    res.json(allPetPosts)
   }
-
-  if (species == 'dog') {
-    const speciesType = await Animal.find({ species: 'dog' })
-    res.json(speciesType)   
-  } 
-  console.log(species)
 })
 
 //Post Requests Here
