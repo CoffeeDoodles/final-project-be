@@ -6,14 +6,14 @@ import mongoose from 'mongoose'
 // import dotenv from 'dotenv'
 import listEndpoints from 'express-list-endpoints'
 
-import animalData from './data/animal-card-data.json';
+import petData from './data/animal-card-data.json';
 
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = Promise
 
-const animalSchema = new mongoose.Schema ({
+const petSchema = new mongoose.Schema ({
   status: String,
   photo: String,
   name: String,
@@ -25,15 +25,15 @@ const animalSchema = new mongoose.Schema ({
   contact: String
 })
 
-const Animal = mongoose.model('Animal', animalSchema);
+const Pet = mongoose.model('Pet', petSchema);
 
 if (process.env.RESET_DB) { 
   const seedDB = async () => {
-    await Animal.deleteMany()
+    await Pet.deleteMany()
 
-    await animalData.forEach(item => {
-      const newAnimal = new Animal(item)
-      newAnimal.save()
+    await petData.forEach(item => {
+      const newPet = new Pet(item)
+      newPet.save()
       })
   }   
   seedDB()
@@ -65,34 +65,36 @@ app.get('/home', (req, res) => {
   res.send('This is the home page')
 })
 
-app.get('/posters', async (req, res) => {
+app.get('/petposts', async (req, res) => {
   const { status, species} = req.query; 
-  
+  //add newest & oldest queries when frontend started
   if (status) {
     if (status == 'lost') {
-      const lostPets = await Animal.find({ status: 'lost' }) 
+      const lostPets = await Pet.find({ status: 'lost' }) 
       res.json(lostPets)
     } else if (status == 'found') {
-      const foundPets = await Animal.find({ status: 'found' }) 
+      const foundPets = await Pet.find({ status: 'found' }) 
       res.json(foundPets)
     } else {
       res.sendStatus(400);
     }
   } else if (species) {
     if (species === 'cat') {
-      const speciesCat = await Animal.find({ species: 'cat' }) 
+      const speciesCat = await Pet.find({ species: 'cat' }) 
       res.json(speciesCat)
     } else if (species === 'dog') {
-        const speciesDog = await Animal.find({ species: 'dog' }) 
+        const speciesDog = await Pet.find({ species: 'dog' }) 
         res.json(speciesDog)
     } else {
         res.sendStatus(400);
     }
   } else {
-    const allPetPosts = await Animal.find()
+    const allPetPosts = await Pet.find()
     res.json(allPetPosts)
   }
 })
+
+app.get('/p')
 
 //Post Requests Here
 
