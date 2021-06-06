@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 // import dotenv from 'dotenv'
 import listEndpoints from "express-list-endpoints";
 
-import petData from "./data/animal-card-data.json";
+import petData from "./data/pet-card-data.json";
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -30,13 +30,13 @@ if (process.env.RESET_DB) {
   const seedDB = async () => {
     await Pet.deleteMany();
 
-    await petData.forEach((item) => {
-      const newPet = new Pet(item);
+    await petData.forEach((pet) => {
+      const newPet = new Pet(pet)
       newPet.save();
-    });
-  };
+    })
+  }
   seedDB();
-}
+};
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -55,11 +55,11 @@ app.use((_, res, next) => {
 });
 
 // Routes
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.send(listEndpoints(app));
 });
 
-app.get("/home", (req, res) => {
+app.get("/home", (_, res) => {
   res.send("This is the home page");
 });
 
