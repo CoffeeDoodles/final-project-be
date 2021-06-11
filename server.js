@@ -90,7 +90,7 @@ app.use((_, res, next) => {
 
 // Routes
 app.get("/", (_, res) => {
-  res.send('HOMEPAAAGE!')
+  res.send(listEndpoints(app))
   // res.send(listEndpoints(app));
 });
 
