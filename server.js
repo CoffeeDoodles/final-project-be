@@ -97,7 +97,7 @@ app.get("/", (_, res) => {
 app.get('/home', authenticateUser)
 app.get('/home', async (req, res) => {
   const testMessage = 'THIS IS THE HOME PAGE!'
-  res.json({ success: true, testMessage })s
+  res.json({ success: true, testMessage })
 })
 
 
