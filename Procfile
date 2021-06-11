@@ -1,1 +1,0 @@
-web: npm start --prefix final-project-be
