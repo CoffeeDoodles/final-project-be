@@ -90,13 +90,14 @@ app.use((_, res, next) => {
 
 // Routes
 app.get("/", (_, res) => {
-  res.send(listEndpoints(app));
+  res.send('HOMEPAAAGE!')
+  // res.send(listEndpoints(app));
 });
 
 app.get('/home', authenticateUser)
 app.get('/home', async (req, res) => {
-  const secretMessage = 'THIS IS THE HOME PAGE!'
-  res.json({ success: true, secretMessage })
+  const testMessage = 'THIS IS THE HOME PAGE!'
+  res.json({ success: true, testMessage })s
 })
 
 
