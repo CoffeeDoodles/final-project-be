@@ -1,12 +1,14 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-// import crypto from 'crypto'
-// import bcrypt from 'bcrypt'
-// import dotenv from 'dotenv'
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
 import listEndpoints from "express-list-endpoints";
 
 import petData from "./data/pet-card-data.json";
+
+dotenv.config()
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -25,6 +27,38 @@ const petSchema = new mongoose.Schema({
 });
 
 const Pet = mongoose.model("Pet", petSchema);
+
+const User = mongoose.model('User', {
+  username: {
+    type: String,
+    required: [true, 'Message is required!'],
+    unique: true 
+  }, 
+  password: {
+    type: String,
+    required: [true, 'Message is required!'],
+    minlength: [8, 'Password must be a minimum of 8 characters!'],
+  }, 
+  accessToken: {
+    type: String, 
+    default: () => crypto.randomBytes(128).toString('hex')
+  }
+})
+
+const authenticateUser = async (req, res, next) => {
+  const accessToken = req.header('Authorization')
+
+  try {
+    const user = await User.findOne({ accessToken })
+    if (user) {
+      next()
+    } else {
+      res.status(401).json({ success: false, message: 'Not authenticated' })
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, message: 'Invalid request', error })
+  }
+}
 
 if (process.env.RESET_DB) {
   const seedDB = async () => {
@@ -59,9 +93,12 @@ app.get("/", (_, res) => {
   res.send(listEndpoints(app));
 });
 
-app.get("/home", (_, res) => {
-  res.send("This is the home page");
-});
+app.get('/home', authenticateUser)
+app.get('/home', async (req, res) => {
+  const secretMessage = 'THIS IS THE HOME PAGE!'
+  res.json({ success: true, secretMessage })
+})
+
 
 app.get("/petposts", async (req, res) => {
   const { status, species } = req.query;
@@ -108,6 +145,47 @@ app.get("/petposts/:postId", async (req, res) => {
 });
 
 //Post Requests Here
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body
+
+  try {
+    const salt = bcrypt.genSaltSync()
+    const newUser = await new User({
+      username,
+      password: bcrypt.hashSync(password, salt)
+    }).save()
+    res.json({
+      success: true,
+      userId: newUser._id,
+      username: newUser.username,
+      accessToken:newUser.accessToken
+    })
+  } catch(error) {
+    res.status(400).json({ success: false, message: 'Invalid request', error })
+  }
+})
+
+// Endpoint to login for users that have already registered 
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body
+
+  try {
+    const user = await User.findOne({ username })
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+      res.json({
+        success: true, 
+        userID: user._id,
+        username: user.username,
+        accessToken: user.accessToken
+      })
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' })
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, message: 'Invalid request', error })
+  }
+})
 
 // Start the server
 app.listen(port, () => {

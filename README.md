@@ -1,1 +1,1 @@
-Live Deploy: https://pet-spotter.herokuapp.com/
+Live Deploy: https://pet-spotter.herokuapp.com/ 
