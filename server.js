@@ -45,6 +45,18 @@ const User = mongoose.model('User', {
   }
 })
 
+if (process.env.RESET_DB) {
+  const seedDB = async () => {
+    await Pet.deleteMany();
+
+    await petData.forEach((pet) => {
+      const newPet = new Pet(pet)
+      newPet.save();
+    })
+  }
+  seedDB();
+};
+
 const authenticateUser = async (req, res, next) => {
   const accessToken = req.header('Authorization')
 
@@ -59,18 +71,6 @@ const authenticateUser = async (req, res, next) => {
     res.status(400).json({ success: false, message: 'Invalid request', error })
   }
 }
-
-if (process.env.RESET_DB) {
-  const seedDB = async () => {
-    await Pet.deleteMany();
-
-    await petData.forEach((pet) => {
-      const newPet = new Pet(pet)
-      newPet.save();
-    })
-  }
-  seedDB();
-};
 
 const port = process.env.PORT || 8080;
 const app = express();
