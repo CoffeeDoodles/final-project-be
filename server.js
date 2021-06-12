@@ -1,12 +1,15 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
+import express from "express"
+import cors from "cors"
+import mongoose from "mongoose"
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import listEndpoints from "express-list-endpoints";
+import listEndpoints from "express-list-endpoints"
+import cloudinaryFramework from 'cloudinary'
+import multer from 'multer'
+import cloudinaryStorage from 'multer-storage-cloudinary'
 
-import petData from "./data/pet-card-data.json";
+import petData from "./data/pet-card-data.json"
 
 dotenv.config()
 
@@ -71,6 +74,23 @@ const authenticateUser = async (req, res, next) => {
     res.status(400).json({ success: false, message: 'Invalid request', error })
   }
 }
+
+const cloudinary = cloudinaryFramework.v2; 
+cloudinary.config({
+  cloud_name: 'petspotter', // this needs to be whatever you get from cloudinary
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
+const storage = cloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'pets',
+    allowedFormats: ['jpg', 'png'],
+    transformation: [{ width: 500, height: 500, crop: 'limit' }],
+  },
+})
+const parser = multer({ storage })
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -184,6 +204,10 @@ app.post('/authenticate-user', async (req, res) => {
   } catch (error) {
     res.status(400).json({ success: false, message: 'Invalid request', error })
   }
+})
+
+app.post('/pets', parser.single('image'), async (req, res) => {
+	res.json({ imageUrl: req.file.path, imageId: req.file.filename})
 })
 
 // Start the server
