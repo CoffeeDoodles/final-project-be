@@ -28,6 +28,18 @@ const petSchema = new mongoose.Schema({
 
 const Pet = mongoose.model("Pet", petSchema);
 
+if (process.env.RESET_DB) {
+  const seedDB = async () => {
+    await Pet.deleteMany();
+
+    await petData.forEach((pet) => {
+      const newPet = new Pet(pet)
+      newPet.save();
+    })
+  }
+  seedDB();
+};
+
 const User = mongoose.model('User', {
   username: {
     type: String,
@@ -44,18 +56,6 @@ const User = mongoose.model('User', {
     default: () => crypto.randomBytes(128).toString('hex')
   }
 })
-
-if (process.env.RESET_DB) {
-  const seedDB = async () => {
-    await Pet.deleteMany();
-
-    await petData.forEach((pet) => {
-      const newPet = new Pet(pet)
-      newPet.save();
-    })
-  }
-  seedDB();
-};
 
 const authenticateUser = async (req, res, next) => {
   const accessToken = req.header('Authorization')
@@ -90,13 +90,11 @@ app.use((_, res, next) => {
 
 // Routes
 app.get("/", (_, res) => {
-  res.send(listEndpoints(app))
-  // res.send(listEndpoints(app));
+  res.send(listEndpoints(app));
 });
 
-app.get('/home', authenticateUser)
-app.get('/home', async (req, res) => {
-  const testMessage = 'THIS IS THE HOME PAGE!'
+app.get('/welcome-user', authenticateUser, async (_, res) => {
+  const testMessage = 'THIS IS THE WELCOME PAGE!'
   res.json({ success: true, testMessage })
 })
 
