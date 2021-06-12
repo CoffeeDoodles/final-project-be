@@ -75,6 +75,12 @@ const authenticateUser = async (req, res, next) => {
   }
 }
 
+//Model for Cloudinary
+const PetImages = mongoose.model('PetImages', {
+  name: String,
+  imageUrl: String
+})
+
 const cloudinary = cloudinaryFramework.v2; 
 cloudinary.config({
   cloud_name: 'petspotter', // this needs to be whatever you get from cloudinary
@@ -85,7 +91,7 @@ cloudinary.config({
 const storage = cloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'pets',
+    folder: 'pet-images',
     allowedFormats: ['jpg', 'png'],
     transformation: [{ width: 500, height: 500, crop: 'limit' }],
   },
@@ -206,8 +212,17 @@ app.post('/authenticate-user', async (req, res) => {
   }
 })
 
-app.post('/pets', parser.single('image'), async (req, res) => {
+app.post('/upload-images', parser.single('image'), async (req, res) => {
 	res.json({ imageUrl: req.file.path, imageId: req.file.filename})
+})
+
+app.post('/upload-images', parser.single('image'), async (req, res) => {
+  try {
+    const petImages = await new PetImages({ name: req.body.filename, imageUrl: req.file.path }).save()
+    res.json(petImages)
+  } catch (err) {
+    res.status(400).json({ errors: err.errors })
+  }
 })
 
 // Start the server
