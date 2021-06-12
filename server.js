@@ -93,7 +93,7 @@ app.get("/", (_, res) => {
   res.send(listEndpoints(app));
 });
 
-app.get('/welcome-user', authenticateUser, async (_, res) => {
+app.get('/welcome', authenticateUser, async (_, res) => {
   const testMessage = 'THIS IS THE WELCOME PAGE!'
   res.json({ success: true, testMessage })
 })
@@ -144,7 +144,7 @@ app.get("/petposts/:postId", async (req, res) => {
 });
 
 //Post Requests Here
-app.post('/register', async (req, res) => {
+app.post('/register-user', async (req, res) => {
   const { username, password } = req.body
 
   try {
@@ -165,7 +165,7 @@ app.post('/register', async (req, res) => {
 })
 
 // Endpoint to login for users that have already registered 
-app.post('/login', async (req, res) => {
+app.post('/authenticate-user', async (req, res) => {
   const { username, password } = req.body
 
   try {
