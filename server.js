@@ -18,16 +18,23 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, us
 mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
-  status: String,
-  photo: String,
-  name: String,
-  species: String,
-  sex: String,
-  breed: String,
-  location: String,
-  description: String,
-  contact: String,
-});
+  petCard: {
+    status: String,
+    photo: String,
+    name: String,
+    species: String,
+    sex: String,
+    breed: String,
+    location: String,
+    description: String,
+    contact: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+    }
+  }
+);
 
 const Pet = mongoose.model("Pet", petSchema);
 
@@ -212,6 +219,20 @@ app.post('/authenticate-user', async (req, res) => {
   }
 })
 
+app.post ('/petposts', async (req, res) => {
+  try { 
+    const newPetPost = await new Post(req.body).save()
+    res.json(newPetPost);
+  } catch (error) {
+    if (error.code === 11000) {
+      res
+        .status(400)
+        .json({ error: "Duplicated value", fields: error.keyValue });
+    }
+    res.status(400).json(error);
+  }
+});
+
 app.post('/upload-images', parser.single('image'), async (req, res) => {
 	res.json({ imageUrl: req.file.path, imageId: req.file.filename})
 })
@@ -224,6 +245,21 @@ app.post('/upload-images', parser.single('image'), async (req, res) => {
     res.status(400).json({ errors: err.errors })
   }
 })
+
+app.delete("/petposts/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedPetPost = await PetPost.findOneAndDelete({ _id: id });
+    if (deletedPetPost) {
+      res.json(deletedPetPost);
+    } else {
+      res.status(404).json({ message: "Not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: "Invalid request", error });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
