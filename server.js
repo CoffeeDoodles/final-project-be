@@ -19,9 +19,9 @@ mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
   petCard: {
-    status: String,
+    status: String,  
     photo: String,
-    name: String,
+    petname: String,
     species: String,
     sex: String,
     breed: String,
@@ -219,9 +219,20 @@ app.post('/authenticate-user', async (req, res) => {
   }
 })
 
+app.post ('/petposts', authenticateUser)
 app.post ('/petposts', async (req, res) => {
   try { 
-    const newPetPost = await new Post(req.body).save()
+    const newPetPost = await new PetPost({ 
+      status,
+      photo,
+      petname,
+      species, 
+      sex, 
+      breed, 
+      location, 
+      description, 
+      contact
+    }).save()
     res.json(newPetPost);
   } catch (error) {
     if (error.code === 11000) {

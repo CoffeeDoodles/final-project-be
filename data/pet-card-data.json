@@ -2,7 +2,7 @@
   {
   "status": "found",
   "photo": "",
-  "name": "Frasse",
+  "petname": "Frasse",
   "species": "cat",
   "sex": "male",
   "breed": "ragdoll",
@@ -13,7 +13,7 @@
 {
   "status": "lost",
   "photo": "",
-  "name": "Socks",
+  "petname": "Socks",
   "species": "cat",
   "sex": "male",
   "breed": "scottish fold" ,
@@ -24,7 +24,7 @@
 {
   "status": "found",
   "photo": "",
-  "name": "Alfie",
+  "petname": "Alfie",
   "species": "dog",
   "sex": "male",
   "breed": "welsh cardigan corgi",
