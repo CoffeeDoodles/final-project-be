@@ -32,7 +32,11 @@ const petSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-    }
+    },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
   }
 );
 
@@ -73,6 +77,7 @@ const authenticateUser = async (req, res, next) => {
   try {
     const user = await User.findOne({ accessToken })
     if (user) {
+      req.user = user
       next()
     } else {
       res.status(401).json({ success: false, message: 'Not authenticated' })
@@ -221,6 +226,8 @@ app.post('/authenticate-user', async (req, res) => {
 
 app.post ('/petposts', authenticateUser)
 app.post ('/petposts', async (req, res) => {
+  const { _id } = req.user
+
   try { 
     const newPetPost = await new PetPost({ 
       status,
@@ -231,7 +238,9 @@ app.post ('/petposts', async (req, res) => {
       breed, 
       location, 
       description, 
-      contact
+      contact,
+      createdAt,
+      user
     }).save()
     res.json(newPetPost);
   } catch (error) {
@@ -257,7 +266,8 @@ app.post('/upload-images', parser.single('image'), async (req, res) => {
   }
 })
 
-app.delete("/petposts/:id", async (req, res) => {
+app.delete ('/petposts/:id', authenticateUser)
+app.delete('/petposts/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
