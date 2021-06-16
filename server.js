@@ -131,7 +131,7 @@ app.get("/", (_, res) => {
   res.send(listEndpoints(app));
 });
 
-app.get('/welcome', authenticateUser, async (_, res) => {
+app.get("/welcome", authenticateUser, async (_, res) => {
   const testMessage = 'THIS IS THE WELCOME PAGE!'
   res.json({ success: true, testMessage })
 })
@@ -177,12 +177,27 @@ app.get("/petposts/:postId", async (req, res) => {
       res.status(404).json({ error: "Post not found" });
     }
   } catch {
-    response.status(400).json({ error: "Invalid request" });
+    res.status(400).json({ error: "Invalid request" });
   }
 });
 
+app.get("/upload-images/:imageUrl", async (req, res) => {
+  const { imageUrl } = req.file.path
+
+  try {
+    const singlePetImage = await PetImages.findOne(imageUrl);
+    if (singlePetImage) {
+      res.json(singlePost);
+    } else {
+      res.status(404).json({ error: "Image not found" });
+    }
+  } catch {
+    res.status(400).json({ error: "Invalid request" });
+  }
+})
+
 //Post Requests Here
-app.post('/register-user', async (req, res) => {
+app.post("/register-user", async (req, res) => {
   const { username, password } = req.body
 
   try {
