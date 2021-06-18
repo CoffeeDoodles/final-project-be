@@ -19,15 +19,14 @@ mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
   petCard: {
-    status: String,  
-    photo: String,
-    petname: String,
+    status: Boolean,  
+    petName: String,
     species: String,
-    sex: String,
+    sex: Boolean,
     breed: String,
     location: String,
     description: String,
-    contact: String,
+    email: String,
   },
   createdAt: {
     type: Date,
@@ -180,21 +179,21 @@ app.get("/petposts/:postId", async (req, res) => {
     res.status(400).json({ error: "Invalid request" });
   }
 });
-
+// get for imageurl untested
 app.get("/upload-images/:imageUrl", async (req, res) => {
   const { imageUrl } = req.file.path
 
   try {
     const singlePetImage = await PetImages.findOne(imageUrl);
     if (singlePetImage) {
-      res.json(singlePost);
+      res.json(singlePetImage);
     } else {
       res.status(404).json({ error: "Image not found" });
     }
   } catch {
     res.status(400).json({ error: "Invalid request" });
   }
-})
+});
 
 //Post Requests Here
 app.post("/register-user", async (req, res) => {
@@ -241,21 +240,31 @@ app.post('/authenticate-user', async (req, res) => {
 
 app.post ('/petposts', authenticateUser)
 app.post ('/petposts', async (req, res) => {
-  const { _id } = req.user
+  // const { _id } = req.user
+  const { 
+    status, 
+    petName,
+    species, 
+    sex, 
+    breed, 
+    location, 
+    description, 
+    email
+  } = req.body
 
   try { 
-    const newPetPost = await new PetPost({ 
-      status,
-      photo,
-      petname,
-      species, 
-      sex, 
-      breed, 
-      location, 
-      description, 
-      contact,
-      createdAt,
-      user
+    const newPetPost = await new Pet({ 
+      petCard: {
+        status,
+        petName,
+        species, 
+        sex, 
+        breed, 
+        location, 
+        description, 
+        email
+      },
+      user: req.user      
     }).save()
     res.json(newPetPost);
   } catch (error) {
