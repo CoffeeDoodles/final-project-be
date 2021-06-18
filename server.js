@@ -19,10 +19,10 @@ mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
   petCard: {
-    status: Boolean,  
+    status: String,  
     petName: String,
     species: String,
-    sex: Boolean,
+    sex: String,
     breed: String,
     location: String,
     description: String,
