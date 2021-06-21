@@ -19,6 +19,7 @@ mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
   petCard: {
+    _id: Number,
     status: String,  
     petName: String,
     species: String,
@@ -165,7 +166,7 @@ app.get("/petposts", async (req, res) => {
   }
 });
 
-app.get("/petposts/:postId", async (req, res) => {
+app.get("/posts/:postId", async (req, res) => {
   const { postId } = req.params;
 
   try {
@@ -240,7 +241,7 @@ app.post('/authenticate-user', async (req, res) => {
 
 app.post ('/petposts', authenticateUser)
 app.post ('/petposts', async (req, res) => {
-  // const { _id } = req.user
+ 
   const { 
     status, 
     petName,
@@ -273,7 +274,7 @@ app.post ('/petposts', async (req, res) => {
         .status(400)
         .json({ error: "Duplicated value", fields: error.keyValue });
     }
-    res.status(400).json(error);
+      res.status(400).json(error);
   }
 });
 
