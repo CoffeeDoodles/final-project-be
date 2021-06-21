@@ -19,7 +19,6 @@ mongoose.Promise = Promise;
 
 const petSchema = new mongoose.Schema({
   petCard: {
-    _id: Number,
     status: String,  
     petName: String,
     species: String,
@@ -33,6 +32,10 @@ const petSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
     },
+  petImages: {
+    name: String,
+    imageUrl: String
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
