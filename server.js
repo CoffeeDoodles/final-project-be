@@ -28,14 +28,12 @@ const petSchema = new mongoose.Schema({
     location: String,
     description: String,
     email: String,
+    imageUrl: String
   },
   createdAt: {
     type: Date,
     default: Date.now
     },
-  petImages: {
-    imageUrl: String
-  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -90,12 +88,7 @@ const authenticateUser = async (req, res, next) => {
   }
 }
 
-//Model for Cloudinary
-const PetImages = mongoose.model('PetImages', {
-  name: String,
-  imageUrl: String
-})
-
+// Image API
 const cloudinary = cloudinaryFramework.v2; 
 cloudinary.config({
   cloud_name: 'petspotter', // this needs to be whatever you get from cloudinary
@@ -169,30 +162,15 @@ app.get("/petposts", async (req, res) => {
   }
 });
 
-app.get("/posts/:postId", async (req, res) => {
-  const { postId } = req.params;
+app.get("/posts/:id", async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const singlePost = await Pet.findById(postId);
+    const singlePost = await Pet.findById({ _id: id }) ;
     if (singlePost) {
       res.json(singlePost);
     } else {
       res.status(404).json({ error: "Post not found" });
-    }
-  } catch {
-    res.status(400).json({ error: "Invalid request" });
-  }
-});
-// get for imageurl untested
-app.get("/upload-images/:imageUrl", async (req, res) => {
-  const { imageUrl } = req.file.path
-
-  try {
-    const singlePetImage = await PetImages.findOne(imageUrl);
-    if (singlePetImage) {
-      res.json(singlePetImage);
-    } else {
-      res.status(404).json({ error: "Image not found" });
     }
   } catch {
     res.status(400).json({ error: "Invalid request" });
@@ -285,17 +263,16 @@ app.post('/upload-images', parser.single('image'), async (req, res) => {
 	res.json({ imageUrl: req.file.path, imageId: req.file.filename})
 })
 
-app.post('/upload-images', parser.single('image'), async (req, res) => {
-  try {
-    const petImages = await new PetImages({ name: req.body.filename, imageUrl: req.file.path }).save()
-    res.json(petImages)
-  } catch (err) {
-    res.status(400).json({ errors: err.errors })
-  }
-})
+// app.post('/upload-images', parser.single('image'), async (req, res) => {
+//   try {
+//     const petImages = await new PetImages({ name: req.body.filename, imageUrl: req.file.path }).save()
+//     res.json(petImages)
+//   } catch (err) {
+//     res.status(400).json({ errors: err.errors })
+//   }
+// })
 
-app.delete ('/petposts/:id', authenticateUser)
-app.delete('/petposts/:id', async (req, res) => {
+app.delete('/posts/:id', authenticateUser, async (req, res) => {
   const { id } = req.params;
 
   try {
