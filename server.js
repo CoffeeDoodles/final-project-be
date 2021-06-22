@@ -13,6 +13,7 @@ import petData from "./data/pet-card-data.json"
 
 dotenv.config()
 
+
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 mongoose.Promise = Promise;
@@ -33,7 +34,6 @@ const petSchema = new mongoose.Schema({
     default: Date.now
     },
   petImages: {
-    name: String,
     imageUrl: String
   },
   user: {
@@ -242,9 +242,7 @@ app.post('/authenticate-user', async (req, res) => {
   }
 })
 
-app.post ('/petposts', authenticateUser)
-app.post ('/petposts', async (req, res) => {
- 
+app.post ('/petposts', authenticateUser, async (req, res) => {
   const { 
     status, 
     petName,
@@ -253,9 +251,10 @@ app.post ('/petposts', async (req, res) => {
     breed, 
     location, 
     description, 
-    email
+    email,
+    imageUrl
   } = req.body
-
+  
   try { 
     const newPetPost = await new Pet({ 
       petCard: {
@@ -266,7 +265,8 @@ app.post ('/petposts', async (req, res) => {
         breed, 
         location, 
         description, 
-        email
+        email,
+        imageUrl
       },
       user: req.user      
     }).save()
