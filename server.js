@@ -13,7 +13,6 @@ import petData from "./data/pet-card-data.json"
 
 dotenv.config()
 
-
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/petspotter";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 mongoose.Promise = Promise;
