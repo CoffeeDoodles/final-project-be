@@ -260,17 +260,12 @@ app.post ('/petposts', authenticateUser, async (req, res) => {
 });
 
 app.post('/upload-images', parser.single('image'), async (req, res) => {
-	res.json({ imageUrl: req.file.path, imageId: req.file.filename})
+	try {
+        res.json({ imageUrl: req.file.path, imageId: req.file.filename})
+    } catch(e) {
+        res.status(400).json(error)
+    }
 })
-
-// app.post('/upload-images', parser.single('image'), async (req, res) => {
-//   try {
-//     const petImages = await new PetImages({ name: req.body.filename, imageUrl: req.file.path }).save()
-//     res.json(petImages)
-//   } catch (err) {
-//     res.status(400).json({ errors: err.errors })
-//   }
-// })
 
 app.delete('/posts/:id', authenticateUser, async (req, res) => {
   const { id } = req.params;
