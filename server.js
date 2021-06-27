@@ -100,7 +100,7 @@ const storage = cloudinaryStorage({
   params: {
     folder: 'pet-images',
     allowedFormats: ['jpg', 'png'],
-    transformation: [{ gravity: "face", height: 400, width: 400, crop: "crop" }],
+    transformation: [{ width: 600, height: 400, crop: 'limit' }],
   },
 })
 const parser = multer({ storage })
