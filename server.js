@@ -105,6 +105,23 @@ const storage = cloudinaryStorage({
 })
 const parser = multer({ storage })
 
+const commentSchema = new mongoose.Schema({
+  comment: {
+    type: String,
+    required: [true, "Message Required"],
+    unique: true,
+    trim: [true],
+    minlength: [5, 'Must be a minimum of 5 characters.'],
+    maxlength: [240, 'Must have a maximum of 240 characters!']
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Comment = mongoose.model("Comment", commentSchema);
+
 const port = process.env.PORT || 8080;
 const app = express();
 
@@ -173,6 +190,27 @@ app.get("/posts/:id", async (req, res) => {
     }
   } catch {
     res.status(400).json({ error: "Invalid request" });
+  }
+});
+
+// Get all Comments
+app.get("/comments", async (_, res) => {
+  const allComments = await Comment.find().sort({ createdAt: -1 }).limit(20);
+  res.json(allCommentss);
+});
+
+// Create a comment
+app.post("/comments", async (req, res) => {
+  try { 
+    const newComment = await new Comment(req.body).save().limit(20)
+    res.json(newComment);
+  } catch (error) {
+    if (error.code === 11000) {
+      res
+        .status(400)
+        .json({ error: "Duplicated value", fields: error.keyValue });
+    }
+    res.status(400).json(error);
   }
 });
 
@@ -280,6 +318,22 @@ app.delete('/posts/:id', authenticateUser, async (req, res) => {
     res.status(400).json({ message: "Invalid request", error });
   }
 });
+
+app.delete("/comments/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedComment = await Comment.findOneAndDelete({ _id: id });
+    if (deletedComment) {
+      res.json(deletedComment);
+    } else {
+      res.status(404).json({ message: "Not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: "Invalid request", error });
+  }
+});
+
 
 // Start the server
 app.listen(port, () => {
